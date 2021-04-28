@@ -1,24 +1,54 @@
-<template>
-  <div>chart</div>
-</template>
 
 <script>
-import { Line } from 'vue-chartjs'
+import { Line , mixins } from 'vue-chartjs'
+const { reactiveProp } = mixins;
 
 export default {
   extends: Line,
+  name:'Chart',
+  mixins: [reactiveProp],
   props: {
-    chartdata: {
-      type: Object,
+    label: {
+      type:String
+    },
+    chartData: {
+      type: Array,
       default: null
     },
+    // recoverData: {
+    //   type:Array
+    // },
+    // confirmedData: {
+    //   type:Array
+    // },
     options: {
       type: Object,
       default: null
+    },
+    chartColor: {
+      type:Object
     }
   },
   mounted () {
-    this.renderChart(this.chartdata, this.options)
+    const dates = this.chartData.map(i=> i.date)
+    const deathsTotals = this.chartData.map(i=> i.totalCases) 
+    const { borderColor,backgroundColor ,borderWidth } = this.chartColor
+
+    this.renderChart({
+        labels:dates,
+        datasets: [
+        {
+            label:this.label,
+            data:deathsTotals,
+            backgroundColor,
+            borderColor,
+            borderWidth,          
+            pointRadius: 0,     
+        },
+       
+       ]
+   },
+    this.options)
   }
 }
 </script>
