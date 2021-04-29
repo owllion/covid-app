@@ -1,6 +1,10 @@
 <template>
   <div class="wrapper w-full px-10 pb-24 pt-24 bg-gradient-to-r from-green-400 to-blue-500 
   ">
+   <Loading :active.sync="isLoading" background-color='radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)' :opacity=0.9 >    
+    <div id="lottie" ref='lottieBox'></div>
+    </Loading>
+
     <h2 class="stateSelected  text-white font-bold absolute -top-24 left-24 z-0 text-opacity-10">{{state}}</h2>
 
     <div class="relative z-50 container rounded-xl p-10 w-120 mx-auto xl:w-full md:p-2"> 
@@ -77,6 +81,8 @@
 </template>
 
 <script>
+import lottie from 'lottie-web'
+import loadingJson from '@/assets/loading.json'
 export default {
  computed: {
    selectState() {
@@ -87,6 +93,7 @@ export default {
 },
  data() {
   return {
+    isLoading:false,
     state:'',
     stateList:[],
     twitter:'',
@@ -102,54 +109,87 @@ export default {
     onVentilatorCurrently:'',
   }
  },
- methods: {
-    
-     async setData(state) {
-    
-      const {data:stateInfo} = await this.$axios.get(`https://api.covidtracking.com/v1/states/${state}/info.json`)
-      console.log(stateInfo)
-      
-      const {notes,twitter} = stateInfo
-       this.notes = notes
-       this.twitter = twitter
+ methods: {    
+     async setData(state) {  
+      try {
+        this.isLoading = true
+
+        const { data:stateInfo } = await this.$axios.get(`https://api.covidtracking.com/v1/states/${state}/info.json`)
+              
+        const {notes,twitter} = stateInfo
+        this.notes = notes
+        this.twitter = twitter
 
         const { data:daily } = await this.$axios.get(`https://api.covidtracking.com/v1/states/${state}/current.json`)
-          console.log(daily)
-            const { 
-              positive,
-              negative,
-              totalTestResults,
-              hospitalizedCurrently,
-              inIcuCurrently,
-              onVentilatorCurrently,
-              recovered,
-              death,  
-              lastUpdateEt 
-            } = daily
+      
+        const { 
+          positive,
+          negative,
+          totalTestResults,
+          hospitalizedCurrently,
+          inIcuCurrently,
+          onVentilatorCurrently,
+          recovered,
+          death,  
+          lastUpdateEt 
+        } = daily
 
-            this.positive = positive
-            this.negative = negative
-            this.totalTestResults = totalTestResults
-            this.hospitalizedCurrently =hospitalizedCurrently
-            this.inIcuCurrently =inIcuCurrently
-            this.onVentilatorCurrently = onVentilatorCurrently
-            this.recovered = recovered
-            this.deaths = death 
-            this.update = lastUpdateEt   
+        this.positive = positive
+        this.negative = negative
+        this.totalTestResults = totalTestResults
+        this.hospitalizedCurrently =hospitalizedCurrently
+        this.inIcuCurrently =inIcuCurrently
+        this.onVentilatorCurrently = onVentilatorCurrently
+        this.recovered = recovered
+        this.deaths = death 
+        this.update = lastUpdateEt 
+
+        this.isLoading = false
+      }catch(err) {
+        this.isLoading = false
+        if(err.response) {
+          alert('error!')
+        }
+      }
+        
      },
    
      async getState() {
-         const { data } = await this.$axios.get('https://gist.githubusercontent.com/mshafrir/2646763/raw/8b0dbb93521f5d6889502305335104218454c2bf/states_titlecase.json')
+        try{
+          this.isLoading =true
+
+          const { data } = await this.$axios.get('https://gist.githubusercontent.com/mshafrir/2646763/raw/8b0dbb93521f5d6889502305335104218454c2bf/states_titlecase.json')
          
-         this.stateList =data
+          this.stateList =data
+          this.isLoading = false
+        }catch(err) {
+          this.isLoading = false
+          if(err.response) {
+            alert('error!')
+          }
+        }
+       
      }
  },
-   created() {
-      this.getState()
+   async created() {
+      this.isLoading = true
+      await this.getState()
       this.state ='AL'
-      this.setData('AL')
+      await this.setData('AL')
+      this.isLoading = false
     
  },
+  mounted() { 
+      const lottieSvg =lottie.loadAnimation({
+      wrapper:this.$refs.lottieBox,
+      animType: 'svg',
+      loop: true,
+      animationData: loadingJson,
+      prerender: true,
+      autoplay: true
+    })
+    lottieSvg.setSpeed(3) 
+   }
  
 }
 </script>

@@ -33,7 +33,7 @@
 
     <!--info box-->
     <div class="grid grid-cols-3 gap-x-5 gap-y-8 md:grid-cols-1">
-       <InfoBox status='Confirmed' :newCases=NewConfirmed :total=TotalConfirmed
+         <InfoBox status='Confirmed' :newCases=NewConfirmed :total=TotalConfirmed
          />
          <InfoBox status='Deaths' :newCases=NewDeaths :total=TotalDeaths
          />
@@ -85,18 +85,22 @@ export default {
    numWithComma(val) {
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
      },
-   fillData(value) {
-      
+   fillData(value) {    
       if(value ==='Global') {
-                
+          this.isLoading = true
+
           this.NewConfirmed = this.global.NewConfirmed
           this.TotalConfirmed = this.global.TotalConfirmed
           this.NewDeaths = this.global.NewDeaths
           this.TotalDeaths = this.global.TotalDeaths
           this.NewRecovered = this.global.NewRecovered
           this.TotalRecovered = this.global.TotalRecovered
+
+          this.isLoading = false
           return
    }else {
+          this.isLoading = true
+
           const result = this.countries.filter(i=> i.Country.toLowerCase() === value.toLowerCase())
           
           console.log(result)
@@ -108,16 +112,23 @@ export default {
           this.TotalDeaths = r.TotalDeaths
           this.NewRecovered = r.NewRecovered
           this.TotalRecovered = r.TotalRecovered
+
+          this.isLoading = false
        }
      },
    async getData() {
       try {
+          this.isLoading = true
+
           const {data: { Date:date, Global, Countries } }  = await this.$axios.get('https://api.covid19api.com/summary')
 
           this.date = date
           this.global = Global
           this.countries = Countries
+
+          this.isLoading = true
       }catch(err) {
+        this.isLoading = false
         if(err.response) {
           alert('error!')
         }
