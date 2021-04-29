@@ -36,10 +36,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$font-content: 'Itim', Microsoft JhengHei;
+
 .wrapper {
   min-height:100vh;
-  font-family: $font-content;
  .backdrop {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.5),rgba(0,0,0,.6));   
  }

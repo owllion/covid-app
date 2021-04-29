@@ -155,12 +155,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$font-content: 'Itim', Microsoft JhengHei;
 $font-title: 'The Girl Next Door', Microsoft JhengHei;
-.wrapper {
-  font-family: $font-content;
-}
-
  .stateSelected {
   font-size: 24rem;
 }
