@@ -10,11 +10,6 @@ const routes = [
     component: ()=> import('@/views/Home.vue')
   },
   {
-    path: '/country-status',
-    name: 'CountryStauts',
-    component: ()=> import('@/views/Country-status.vue')
-  },
-  {
     path: '/us-status',
     name: 'AmericaStatus',
     component: ()=> import('@/views/US-status.vue')

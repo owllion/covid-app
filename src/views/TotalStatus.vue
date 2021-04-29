@@ -1,5 +1,9 @@
 <template>
  <div class="wrapper w-full p-24 bg-gradient-to-r from-blue-500 via-green-400 to-yellow-400 xl:px-5">
+    <Loading :active.sync="isLoading" background-color='radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)' :opacity=0.9 >    
+    <div id="lottie" ref='lottieBox'></div>
+    </Loading>
+   
    <section class="container px-24 xl:px-10 w-full xs:px-5">
        <h1 class="text-6xl font-semibold text-white md:text-2xl tracking-wide md:mb-6 md:pl-3">{{selectedCountry}}</h1>
         
@@ -26,109 +30,37 @@
       </div>
     <!--back-->  
     </div>
+
     <!--info box-->
     <div class="grid grid-cols-3 gap-x-5 gap-y-8 md:grid-cols-1">
-       <!--box1-->
-       <div class="confirmed  bg-transparent shadow-xl p-12 rounded-xl xs:p-7">
-         <h3 class="text-blue-900 tracking-wider text-3xl font-bold mb-4 xl:text-center xs:text-xl">Confirmed</h3>
-          <!--flex-->
-        <div class="flex flex-wrap justify-between sm:justify-center"> 
+       <InfoBox status='Confirmed' :newCases=NewConfirmed :total=TotalConfirmed
+         />
+         <InfoBox status='Deaths' :newCases=NewDeaths :total=TotalDeaths
+         />
+         <InfoBox status='Recovered' :newCases=NewRecovered :total=TotalRecovered
+         />
+    </div>
+    <!--info box-->
 
-        <!--info left-->
-         <div class="info xl:mb-5 sm:w-full sm:text-center">
-          <div>
-           <span class="font-bold tracking-wide text-white">NEW :</span> {{ numWithComma(NewConfirmed) }}
-         </div>
-         <div>
-           <span class="font-bold tracking-wide text-white">TOTAL :</span> {{ numWithComma(TotalConfirmed) }}
-         </div>
-         </div>
-         <!--info left-->
-
-         <!--right-->
-         <div class="img  pl-8 sm:pl-0">
-           <img src="@/assets/confirm.png" alt="" class="">
-         </div>
-        <!--right-->
-
-        </div>
-        <!--flex-->
-          
-       </div>
-       <!--box1-->
-
-       <!--box2-->
-       <div class="death bg-transparent shadow-xl p-12 rounded-xl xs:p-7">
-         <h3 class="text-blue-900 tracking-wider text-3xl font-bold mb-4 xl:text-center xs:text-xl">Deaths</h3>
-          <!--flex-->
-        <div class="flex flex-wrap justify-between sm:justify-center"> 
-
-        <!--info left-->
-         <div class="info xl:mb-5 sm:w-full sm:text-center">
-          <div>
-           <span class="font-bold tracking-wide text-white">NEW :</span> {{ numWithComma(NewDeaths) }}
-         </div>
-         <div>
-           <span class="font-bold tracking-wide text-white">TOTAL :</span> {{ numWithComma(TotalDeaths) }}
-         </div>
-         </div>
-         <!--info left-->
-
-         <!--right-->
-         <div class="img  pl-8 sm:pl-0">
-           <img src="@/assets/deaths.png" alt="" class="">
-         </div>
-        <!--right-->
-
-        </div>
-        <!--flex-->
-          
-       </div>
-       <!--box2-->
-
-       <!--box3-->
-       <div class="recover bg-transparent shadow-xl p-12 rounded-xl xs:p-7">
-         <h3 class="text-blue-900 tracking-wider text-3xl font-bold mb-4 xl:text-center xs:text-xl">Recovered</h3>
-         <!--flex-->
-        <div class="flex flex-wrap justify-between sm:justify-center"> 
-
-        <!--info left-->
-         <div class="info xl:mb-5 sm:w-full sm:text-center">
-          <div>
-           <span class="font-bold tracking-wide text-white">NEW :</span> {{ numWithComma(NewRecovered) }}
-         </div>
-         <div>
-           <span class="font-bold tracking-wide text-white">TOTAL :</span> {{ numWithComma(TotalRecovered) }}
-         </div>
-         </div>
-         <!--info left-->
-
-         <!--right-->
-         <div class="img  pl-8 sm:pl-0">
-           <img src="@/assets/recover.png" alt="" class="">
-         </div>
-        <!--right-->
-
-        </div>
-        <!--flex-->
-
-       </div>
-       <!--box3-->
-       </div>
-       <!--info box-->
-       <div class="flex justify-end mt-5 sm:justify-center">
-         <span class="text-2xl sm:text-base">Last Update: {{$moment(date).format('YYYY/MM/DD')}}</span>
-       </div>
+     <div class="flex justify-end mt-5 sm:justify-center">
+     <span class="text-2xl sm:text-base text-blue-800 font-semibold">Last Update: {{$moment(date).format('YYYY/MM/DD')}}</span>
+    </div>
     </div> <!--container-->
    </section>
  </div>
 </template>
 
 <script>
+import InfoBox from '@/components/InfoBox'
+import lottie from 'lottie-web'
+import loadingJson from '@/assets/loading.json'
 export default {
-  
+  components: {
+    InfoBox
+  },
   data() {
     return {
+      isLoading:false,
       date:'',
       global:{},
       countries:[],
@@ -149,13 +81,13 @@ export default {
     }
    
   },
-   methods: {
-     numWithComma(val) {
+  methods: {
+   numWithComma(val) {
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
      },
-     fillData(value) {
+   fillData(value) {
       
-       if(value ==='Global') {
+      if(value ==='Global') {
                 
           this.NewConfirmed = this.global.NewConfirmed
           this.TotalConfirmed = this.global.TotalConfirmed
@@ -164,7 +96,7 @@ export default {
           this.NewRecovered = this.global.NewRecovered
           this.TotalRecovered = this.global.TotalRecovered
           return
-       }else {
+   }else {
           const result = this.countries.filter(i=> i.Country.toLowerCase() === value.toLowerCase())
           
           console.log(result)
@@ -178,20 +110,39 @@ export default {
           this.TotalRecovered = r.TotalRecovered
        }
      },
-      async getData() {
-         const {data: { Date:date, Global, Countries } }  = await this.$axios.get('https://api.covid19api.com/summary')
+   async getData() {
+      try {
+          const {data: { Date:date, Global, Countries } }  = await this.$axios.get('https://api.covid19api.com/summary')
 
-         this.date = date
-         this.global = Global
-         this.countries = Countries
+          this.date = date
+          this.global = Global
+          this.countries = Countries
+      }catch(err) {
+        if(err.response) {
+          alert('error!')
+        }
+      }
+        
        
       }
    },
    async created() {
+     this.isLoading = true
      await this.getData()
      this.fillData('Global')
      this.selectedCountry = 'Global'
-     
+     this.isLoading = false
+   },
+     mounted() { 
+      const lottieSvg =lottie.loadAnimation({
+      wrapper:this.$refs.lottieBox,
+      animType: 'svg',
+      loop: true,
+      animationData: loadingJson,
+      prerender: true,
+      autoplay: true
+    })
+    lottieSvg.setSpeed(3) 
    }
 }
 </script>
