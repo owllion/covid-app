@@ -6,7 +6,7 @@
  🖌 [The Covid Tracking Project Data API](https://covidtracking.com/data/api)
 
 ## 使用技術
-> Vue2 + Vuex + Vue Router + Tailwind CSS + SCSS 
+> Vue2 + Vue Router + Tailwind CSS + SCSS 
  
 ## DEMO
 * [線上DEMO](https://covid-tracker-19-owllion.herokuapp.com/#/) 
