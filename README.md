@@ -1,7 +1,7 @@
 # Covid Tracker
 
 ## 簡介
- * 使用Vue.js串接 COVID19 相關 API ，實作相關數據查詢網站     
+ * 使用 Vue.js 串接 Covid-19 相關 API ，實作 Covid 數據查詢網站     
  🖌 [COVID19 API](https://documenter.getpostman.com/view/10808728/SzS8rjbc#00030720-fae3-4c72-8aea-ad01ba17adf8)    
  🖌 [The Covid Tracking Project Data API](https://covidtracking.com/data/api)
 
